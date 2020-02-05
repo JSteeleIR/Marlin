@@ -380,12 +380,6 @@
 
 #define HAS_DEBUG_MENU (ENABLED(ULTIPANEL) && ENABLED(LCD_PROGRESS_BAR_TEST))
 
-// MK2 Multiplexer forces SINGLENOZZLE and kills DISABLE_INACTIVE_EXTRUDER
-#if ENABLED(MK2_MULTIPLEXER)
-  #define SINGLENOZZLE
-  #undef DISABLE_INACTIVE_EXTRUDER
-#endif
-
 /**
  * Extruders have some combination of stepper motors and hotends
  * so we separate these concepts into the defines:
@@ -416,6 +410,16 @@
   #define E_MANUAL        EXTRUDERS
 #endif
 
+// No inactive extruders with MK2_MULTIPLEXER or SWITCHING_NOZZLE
+#if ENABLED(MK2_MULTIPLEXER) || ENABLED(SWITCHING_NOZZLE)
+  #undef DISABLE_INACTIVE_EXTRUDER
+#endif
+
+// MK2 Multiplexer forces SINGLENOZZLE
+#if ENABLED(MK2_MULTIPLEXER)
+  #define SINGLENOZZLE
+#endif
+
 #if ENABLED(SINGLENOZZLE) || ENABLED(MIXING_EXTRUDER)         // One hotend, one thermistor, no XY offset
   #undef HOTENDS
   #define HOTENDS       1
@@ -435,10 +439,20 @@
  */
 #if ENABLED(DISTINCT_E_FACTORS) && E_STEPPERS > 1
   #define XYZE_N (XYZ + E_STEPPERS)
+  #if ENABLED(HANGPRINTER)
+    #define NUM_AXIS_N (ABCD + E_STEPPERS)
+  #else
+    #define NUM_AXIS_N (XYZ + E_STEPPERS)
+  #endif
   #define E_AXIS_N (E_AXIS + extruder)
 #else
   #undef DISTINCT_E_FACTORS
   #define XYZE_N XYZE
+  #if ENABLED(HANGPRINTER)
+    #define NUM_AXIS_N ABCDE
+  #else
+    #define NUM_AXIS_N XYZE
+  #endif
   #define E_AXIS_N E_AXIS
 #endif
 
@@ -463,11 +477,45 @@
   #endif
   #undef Z_SERVO_ANGLES
   #define Z_SERVO_ANGLES { BLTOUCH_DEPLOY, BLTOUCH_STOW }
+  #define BLTOUCH_ANGLES { BLTOUCH_DEPLOY, BLTOUCH_STOW }
 
-  #define BLTOUCH_DEPLOY    10
-  #define BLTOUCH_STOW      90
-  #define BLTOUCH_SELFTEST 120
-  #define BLTOUCH_RESET    160
+  #define BLTOUCH_DEPLOY       10
+  #define BLTOUCH_SW_MODE      60
+  #define BLTOUCH_STOW         90
+  #define BLTOUCH_SELFTEST    120
+  #define BLTOUCH_MODE_STORE  130
+  #define BLTOUCH_5V_MODE     140
+  #define BLTOUCH_OD_MODE     150
+  #define BLTOUCH_RESET       160
+  
+/**
+ * The following commands require different minimum delays.
+ *
+ * 500ms required for a reliable Reset.
+ *
+ * 750ms required for Deploy/Stow, otherwise the alarm state
+ *       will not be seen until the following move command.
+ */
+
+#ifndef BLTOUCH_SET5V_DELAY
+  #define BLTOUCH_SET5V_DELAY   150
+#endif
+#ifndef BLTOUCH_SETOD_DELAY
+  #define BLTOUCH_SETOD_DELAY   150
+#endif
+#ifndef BLTOUCH_MODE_STORE_DELAY
+  #define BLTOUCH_MODE_STORE_DELAY 150
+#endif
+#ifndef BLTOUCH_DEPLOY_DELAY
+  #define BLTOUCH_DEPLOY_DELAY   750
+#endif
+#ifndef BLTOUCH_STOW_DELAY
+  #define BLTOUCH_STOW_DELAY     750
+#endif
+#ifndef BLTOUCH_RESET_DELAY
+  #define BLTOUCH_RESET_DELAY    500
+#endif
+
   #define _TEST_BLTOUCH(P) (READ(P##_PIN) != P##_ENDSTOP_INVERTING)
 
   // Always disable probe pin inverting for BLTouch
@@ -492,7 +540,7 @@
  * Set flags for enabled probes
  */
 #define HAS_BED_PROBE (ENABLED(FIX_MOUNTED_PROBE) || ENABLED(Z_PROBE_ALLEN_KEY) || HAS_Z_SERVO_PROBE || ENABLED(Z_PROBE_SLED) || ENABLED(SOLENOID_PROBE))
-#define PROBE_SELECTED (HAS_BED_PROBE || ENABLED(PROBE_MANUALLY))
+#define PROBE_SELECTED (HAS_BED_PROBE || ENABLED(PROBE_MANUALLY) || ENABLED(MESH_BED_LEVELING))
 
 #if !HAS_BED_PROBE
   // Clear probe pin settings when no probe is selected

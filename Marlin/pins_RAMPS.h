@@ -56,12 +56,16 @@
 // Servos
 //
 #ifdef IS_RAMPS_13
-  #define SERVO0_PIN        7   // RAMPS_13 // Will conflict with BTN_EN2 on LCD_I2C_VIKI
+  #define SERVO0_PIN        7   // RAMPS_13
 #else
   #define SERVO0_PIN       11
 #endif
-#define SERVO1_PIN          6
-#define SERVO2_PIN          5
+#ifndef SERVO1_PIN
+  #define SERVO1_PIN        6
+#endif
+#ifndef SERVO2_PIN
+  #define SERVO2_PIN        5
+#endif
 #ifndef SERVO3_PIN
   #define SERVO3_PIN        4
 #endif
@@ -138,7 +142,7 @@
   #endif
 #endif
 
-#if ENABLED(HAVE_TMC2208)
+#if HAS_DRIVER(TMC2208)
   /**
    * TMC2208 stepper drivers
    *
@@ -161,31 +165,75 @@
    * Software serial
    */
 
-  #define X_SERIAL_TX_PIN    40
-  #define X_SERIAL_RX_PIN    63
-  #define X2_SERIAL_TX_PIN   -1
-  #define X2_SERIAL_RX_PIN   -1
+  #ifndef X_SERIAL_TX_PIN
+    #define X_SERIAL_TX_PIN  40
+  #endif
+  #ifndef X_SERIAL_RX_PIN
+    #define X_SERIAL_RX_PIN  63
+  #endif
+  #ifndef X2_SERIAL_TX_PIN
+    #define X2_SERIAL_TX_PIN -1
+  #endif
+  #ifndef X2_SERIAL_RX_PIN
+    #define X2_SERIAL_RX_PIN -1
+  #endif
 
-  #define Y_SERIAL_TX_PIN    59
-  #define Y_SERIAL_RX_PIN    64
-  #define Y2_SERIAL_TX_PIN   -1
-  #define Y2_SERIAL_RX_PIN   -1
+  #ifndef Y_SERIAL_TX_PIN
+    #define Y_SERIAL_TX_PIN  59
+  #endif
+  #ifndef Y_SERIAL_RX_PIN
+    #define Y_SERIAL_RX_PIN  64
+  #endif
+  #ifndef Y2_SERIAL_TX_PIN
+    #define Y2_SERIAL_TX_PIN -1
+  #endif
+  #ifndef Y2_SERIAL_RX_PIN
+    #define Y2_SERIAL_RX_PIN -1
+  #endif
 
-  #define Z_SERIAL_TX_PIN    42
-  #define Z_SERIAL_RX_PIN    65
-  #define Z2_SERIAL_TX_PIN   -1
-  #define Z2_SERIAL_RX_PIN   -1
+  #ifndef Z_SERIAL_TX_PIN
+    #define Z_SERIAL_TX_PIN  42
+  #endif
+  #ifndef Z_SERIAL_RX_PIN
+    #define Z_SERIAL_RX_PIN  65
+  #endif
+  #ifndef Z2_SERIAL_TX_PIN
+    #define Z2_SERIAL_TX_PIN -1
+  #endif
+  #ifndef Z2_SERIAL_RX_PIN
+    #define Z2_SERIAL_RX_PIN -1
+  #endif
 
-  #define E0_SERIAL_TX_PIN   44
-  #define E0_SERIAL_RX_PIN   66
-  #define E1_SERIAL_TX_PIN   -1
-  #define E1_SERIAL_RX_PIN   -1
-  #define E2_SERIAL_TX_PIN   -1
-  #define E2_SERIAL_RX_PIN   -1
-  #define E3_SERIAL_TX_PIN   -1
-  #define E3_SERIAL_RX_PIN   -1
-  #define E4_SERIAL_TX_PIN   -1
-  #define E4_SERIAL_RX_PIN   -1
+  #ifndef E0_SERIAL_TX_PIN
+    #define E0_SERIAL_TX_PIN 44
+  #endif
+  #ifndef E0_SERIAL_RX_PIN
+    #define E0_SERIAL_RX_PIN 66
+  #endif
+  #ifndef E1_SERIAL_TX_PIN
+    #define E1_SERIAL_TX_PIN -1
+  #endif
+  #ifndef E1_SERIAL_RX_PIN
+    #define E1_SERIAL_RX_PIN -1
+  #endif
+  #ifndef E2_SERIAL_TX_PIN
+    #define E2_SERIAL_TX_PIN -1
+  #endif
+  #ifndef E2_SERIAL_RX_PIN
+    #define E2_SERIAL_RX_PIN -1
+  #endif
+  #ifndef E3_SERIAL_TX_PIN
+    #define E3_SERIAL_TX_PIN -1
+  #endif
+  #ifndef E3_SERIAL_RX_PIN
+    #define E3_SERIAL_RX_PIN -1
+  #endif
+  #ifndef E4_SERIAL_TX_PIN
+    #define E4_SERIAL_TX_PIN -1
+  #endif
+  #ifndef E4_SERIAL_RX_PIN
+    #define E4_SERIAL_RX_PIN -1
+  #endif
 #endif
 
 //
@@ -223,46 +271,48 @@
 // Heaters / Fans
 //
 #ifndef MOSFET_D_PIN
-  #define MOSFET_D_PIN  -1
+  #define MOSFET_D_PIN     -1
 #endif
 #ifndef RAMPS_D8_PIN
-  #define RAMPS_D8_PIN   8
+  #define RAMPS_D8_PIN      8
 #endif
 #ifndef RAMPS_D9_PIN
-  #define RAMPS_D9_PIN   9
+  #define RAMPS_D9_PIN      9
 #endif
 #ifndef RAMPS_D10_PIN
-  #define RAMPS_D10_PIN 10
+  #define RAMPS_D10_PIN    10
 #endif
 
-#define HEATER_0_PIN     RAMPS_D10_PIN
+#define HEATER_0_PIN       RAMPS_D10_PIN
 
 #if ENABLED(IS_RAMPS_EFB)                      // Hotend, Fan, Bed
-  #define FAN_PIN        RAMPS_D9_PIN
-  #define HEATER_BED_PIN RAMPS_D8_PIN
+  #define HEATER_BED_PIN   RAMPS_D8_PIN
 #elif ENABLED(IS_RAMPS_EEF)                    // Hotend, Hotend, Fan
-  #define HEATER_1_PIN   RAMPS_D9_PIN
-  #define FAN_PIN        RAMPS_D8_PIN
+  #define HEATER_1_PIN     RAMPS_D9_PIN
 #elif ENABLED(IS_RAMPS_EEB)                    // Hotend, Hotend, Bed
-  #define HEATER_1_PIN   RAMPS_D9_PIN
-  #define HEATER_BED_PIN RAMPS_D8_PIN
+  #define HEATER_1_PIN     RAMPS_D9_PIN
+  #define HEATER_BED_PIN   RAMPS_D8_PIN
 #elif ENABLED(IS_RAMPS_EFF)                    // Hotend, Fan, Fan
-  #define FAN_PIN        RAMPS_D9_PIN
-  #define FAN1_PIN       RAMPS_D8_PIN
-#elif ENABLED(IS_RAMPS_SF)                     // Spindle, Fan
-  #define FAN_PIN        RAMPS_D8_PIN
-#else                                          // Non-specific are "EFB" (i.e., "EFBF" or "EFBE")
-  #define FAN_PIN        RAMPS_D9_PIN
-  #define HEATER_BED_PIN RAMPS_D8_PIN
+  #define FAN1_PIN         RAMPS_D8_PIN
+#elif DISABLED(IS_RAMPS_SF)                    // Not Spindle, Fan (i.e., "EFBF" or "EFBE")
+  #define HEATER_BED_PIN   RAMPS_D8_PIN
   #if HOTENDS == 1
-    #define FAN1_PIN     MOSFET_D_PIN
+    #define FAN1_PIN       MOSFET_D_PIN
   #else
-    #define HEATER_1_PIN MOSFET_D_PIN
+    #define HEATER_1_PIN   MOSFET_D_PIN
   #endif
 #endif
 
 #ifndef FAN_PIN
-  #define FAN_PIN           4   // IO pin. Buffer needed
+  #if ENABLED(IS_RAMPS_EFB) || ENABLED(IS_RAMPS_EFF)  // Hotend, Fan, Bed or Hotend, Fan, Fan
+    #define FAN_PIN        RAMPS_D9_PIN
+  #elif ENABLED(IS_RAMPS_EEF) || ENABLED(IS_RAMPS_SF) // Hotend, Hotend, Fan or Spindle, Fan
+    #define FAN_PIN        RAMPS_D8_PIN
+  #elif ENABLED(IS_RAMPS_EEB)                         // Hotend, Hotend, Bed
+    #define FAN_PIN         4   // IO pin. Buffer needed
+  #else                                               // Non-specific are "EFB" (i.e., "EFBF" or "EFBE")
+    #define FAN_PIN        RAMPS_D9_PIN
+  #endif
 #endif
 
 //
@@ -446,8 +496,8 @@
 
     #elif ENABLED(LCD_I2C_VIKI)
 
-      #define BTN_EN1           22   // http://files.panucatt.com/datasheets/viki_wiring_diagram.pdf explains 40/42.
-      #define BTN_EN2            7   // 22/7 are unused on RAMPS_14. 22 is unused and 7 the SERVO0_PIN on RAMPS_13.
+      #define BTN_EN1           40   // http://files.panucatt.com/datasheets/viki_wiring_diagram.pdf explains 40/42.
+      #define BTN_EN2           42   // for sake of the wiring diagram for RAMPS 1.4 we keep 40/42, confirmed working.
       #define BTN_ENC           -1
 
       #define LCD_SDSS          SDSS
@@ -507,7 +557,7 @@
       #define BTN_ENC           35
 
       #define SD_DETECT_PIN     49
-      #define KILL_PIN          64
+      #define KILL_PIN          41
 
     #elif ENABLED(MINIPANEL)
 
